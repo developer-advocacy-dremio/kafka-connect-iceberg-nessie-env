@@ -87,3 +87,7 @@ curl -X POST http://localhost:8083/connectors -H "Content-Type: application/json
 ```
 echo '{"id": 1, "name": "Alex Merced"}' | docker exec -i kafka kafka-console-producer.sh --broker-list kafka:9092 --topic my_topic
 ```
+
+## Step 5 - Query table to see if data landed
+
+Head back to dremio and query the table.
