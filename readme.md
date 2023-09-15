@@ -33,7 +33,16 @@ docker-compose up nessie
 
 - create folder in your catalog called `db`
 
-- run the following SQL `CREATE TABLE nessie.db.table (id int, name varchar);`
+- run the following SQL 
+
+```
+CREATE TABLE default.events_list (
+    id VARCHAR,
+    type VARCHAR,
+    ts TIMESTAMP,
+    payload VARCHAR)
+PARTITIONED BY (hours(ts));
+```
 
 ## Step 2 - Spin Up Kafka and Kafka Connect
 
@@ -51,7 +60,7 @@ docker-compose up kafka-connect
 - Create a kafka topic with the following command in a 7th terminal
 
 ```
-docker exec -it kafka kafka-topics.sh --create --bootstrap-server kafka:9092 --replication-factor 1 --partitions 1 --topic my_topic
+docker-compose exec kafka kafka-topics.sh --create --bootstrap-server kafka:9092 --replication-factor 1 --partitions 1 --topic my_topic
 ```
 
 
@@ -85,7 +94,7 @@ curl -X POST http://localhost:8083/connectors -H "Content-Type: application/json
 ## Step 4 - Push data to topic
 
 ```
-echo '{"id": 1, "name": "Alex Merced"}' | docker exec -i kafka kafka-console-producer.sh --broker-list kafka:9092 --topic my_topic
+echo '{"schema": {"type": "string"}, "payload": "{\"id\": 1, \"name\": \"Alex Merced\"}"}' | docker-compose exec -T kafka kafka-console-producer --bootstrap-server kafka:9092 --topic my_topic
 ```
 
 ## Step 5 - Query table to see if data landed
